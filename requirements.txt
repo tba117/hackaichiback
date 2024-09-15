@@ -168,9 +168,6 @@ thop==0.1.1.post2209072238
 tifffile==2024.5.3
 toml==0.10.2
 tomlkit==0.12.5
-torch==2.3.0
-torchaudio==2.2.0.dev20240507+cu118
-torchvision==0.18.0
 tqdm==4.66.4
 trailrunner==1.4.0
 traitlets==5.14.3
