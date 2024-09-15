@@ -140,8 +140,6 @@ pydantic_core==2.20.1
 pyflakes==3.2.0
 Pygments==2.18.0
 PyJWT==2.8.0
-pyOpenSSL==24.1.0
-pywin32==306
 PyYAML==6.0.1
 qrcode==7.4.2
 redis==3.5.3
