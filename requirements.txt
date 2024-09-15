@@ -171,7 +171,6 @@ trailrunner==1.4.0
 traitlets==5.14.3
 twilio==9.0.0
 Twisted==24.3.0
-twisted-iocpsupport==1.0.4
 txaio==23.1.1
 typing_extensions==4.9.0
 tzdata==2023.3
