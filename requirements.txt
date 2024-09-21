@@ -20,5 +20,5 @@ gunicorn
 psycopg2
 psycopg2-binary
 PyJWT
-rest_framework_simplejwt
+djangorestframework-simplejwt
 whitenoise
