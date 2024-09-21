@@ -15,7 +15,7 @@ User = get_user_model()
 # 新規登録
 class RegisterView(APIView):
     permission_classes = [AllowAny]
-    
+
     def post(self, request, *args, **kwargs):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -26,6 +26,8 @@ class RegisterView(APIView):
 
 # ログイン
 class LoginView(APIView):  #ログイン
+    permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
         serializer = LoginSerializer(data=request.data, context={'request':request})
         if serializer.is_valid():
@@ -44,6 +46,8 @@ class LoginView(APIView):  #ログイン
 
 # ユーザの詳細取得
 class UserDetailView(APIView):
+    permission_classes = [AllowAny]
+
     @csrf_exempt  # CSRFトークンを無視
     def get(self, request, user_id):
         # ユーザー情報の取得
@@ -102,6 +106,9 @@ class UserUpdateView(APIView):
 
 # アカウント削除
 class CloseAccountView(APIView):
+    # ユーザー認証が必要
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request, user_id):
         try:
             user = User.objects.filter(user_id=user_id).first()
