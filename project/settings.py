@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-c4m5ru74e=0=aeevzty$%@7nqg#(1s75iv_#cpkr5+5upppta=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [...,
+                '.herokuapp.com', #この行を追加
+                ]
 
 
 # Application definition
@@ -52,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware', # 追加
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # 追加
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -80,8 +83,12 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',#どのDBでもPostgreSQLなら同じ
+        'NAME': 'deg7ou4g8mafdu',  # Heroku Postgresで確認したDatabaseの値を入力
+        'USER': 'u7s2mnar60k61u',  # Heroku Postgresで確認したUserの値を入力
+        'PASSWORD': 'p067094e3e7eb828f33a2d6a48ff2f9e1f21638ab499c557e1c934b5affb9c378',  # Heroku Postgresで確認したPasswordの値を入力
+        'HOST': 'cbec45869p4jbu.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com',  # Heroku Postgresで確認したHostの値を入力
+        'PORT': '5432',  # どのDBでもPostgreSQLなら同じ
     }
 }
 
@@ -149,4 +156,13 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # リフレッシュトークンの有効期限
     'ROTATE_REFRESH_TOKENS': True,  # リフレッシュ時に新しいリフレッシュトークンを発行する
     'BLACKLIST_AFTER_ROTATION': True,  # リフレッシュ後、古いトークンを無効にする
+}
+
+import os
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ]
 }
