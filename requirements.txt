@@ -17,6 +17,7 @@ django-storages
 django-timezone-field
 djangorestframework
 gunicorn
+Pillow
 psycopg2
 psycopg2-binary
 PyJWT
