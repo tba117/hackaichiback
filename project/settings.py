@@ -159,8 +159,8 @@ AUTH_USER_MODEL = 'app.User'  # appはアプリケーション名
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # アクセストークンの有効期限
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # リフレッシュトークンの有効期限
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),  # アクセストークンの有効期限
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),  # リフレッシュトークンの有効期限
     'ROTATE_REFRESH_TOKENS': True,  # リフレッシュ時に新しいリフレッシュトークンを発行する
     'BLACKLIST_AFTER_ROTATION': True,  # リフレッシュ後、古いトークンを無効にする
 }

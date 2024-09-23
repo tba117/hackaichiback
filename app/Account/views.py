@@ -11,7 +11,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .serializers import RegisterSerializer, LoginSerializer, UserUpdateSerializer
-from ..models import AccessToken
 
 User = get_user_model()
 
@@ -96,7 +95,7 @@ class UserDetailView(APIView):
 class UserUpdateView(APIView):
     # ユーザー認証が必要
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     @method_decorator(csrf_exempt)
     def patch(self, request):
