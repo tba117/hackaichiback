@@ -51,3 +51,40 @@ def generate_questions(request, user_id):
         return Response({'error': 'ユーザーが見つかりません'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+@api_view(['POST'])
+def generate_profile(request, user_id):
+    try:
+        # ユーザーIDでユーザーを検索
+        user = User.objects.get(user_id=user_id)
+        user_id = user.user_id
+
+        # クライアントから送信された解答を取得
+        answers = request.data.get('answers',[])
+
+        # 解答が存在しない場合はエラーレスポンス
+        if not answers:
+            return Response({"error": "解答が提供されていません"}, status=status.HTTP_400_BAD_REQUEST)
+        
+         # GPT-4に送信するプロンプトの作成
+        prompt = f"以下の解答を元に、{user_id}さんのプロフィールを生成してください。\n\n"
+        for i, answer in enumerate(answers, 1):
+            prompt += f"質問{i}: {answer}\n"
+
+        # OpenAI API呼び出し
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "あなたはプロのプロフィール作成者です。"},
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        # GPT-4から生成されたプロフィールを抽出
+        generated_profile = response.choices[0].message.content.strip()
+
+        return Response({"profile": generated_profile}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

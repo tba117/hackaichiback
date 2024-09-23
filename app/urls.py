@@ -18,6 +18,7 @@ urlpatterns = [
     path('close/<str:user_id>/', account_views.CloseAccountView.as_view(), name='close-account'), # アカウント削
 
     path('generate-questions/<str:user_id>/', other_views.generate_questions, name='generate_questions'),
+    path('generate-profile/', other_views.generate_profile, name='generate_profile'),
 
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # JWTトークンの取得
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), # JWTトークンのリフレッシュ
