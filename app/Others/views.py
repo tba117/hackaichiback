@@ -10,6 +10,7 @@ User = get_user_model()
 # OpenAI APIキーを環境変数から取得
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
+# 質問を生成
 @api_view(['GET'])
 def generate_questions(request, user_id):
     try:
@@ -52,7 +53,7 @@ def generate_questions(request, user_id):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-
+# 回答から取説生成
 @api_view(['POST'])
 def generate_profile(request, user_id):
     try:
@@ -90,5 +91,53 @@ def generate_profile(request, user_id):
 
         return Response({"profile": generated_profile}, status=status.HTTP_200_OK)
 
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+# 感想からプロフィールを生成
+@api_view(['POST'])
+def update_profile_with_feedback(request, user_id):
+    try:
+        # ユーザーIDでユーザーを検索
+        user = User.objects.get(user_id=user_id)
+
+        # クライアントから送信された感想を取得
+        feedback = request.data.get('feedback', "")
+
+        # 感想がない場合はエラーレスポンス
+        if not feedback:
+            return Response({"error": "感想が提供されていません"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 現在のプロフィールと感想を取得
+        current_profile = user.user_manual if user.user_manual else "まだプロフィールが生成されていません。"
+
+        # GPT-4に送信するプロンプトの作成
+        prompt = (
+            f"以下は現在の{user.username}さんのプロフィールです:\n\n{current_profile}\n\n"
+            f"これに基づいて、以下の感想をもとに新しいプロフィールを生成してください。\n"
+            f"感想: {feedback}"
+        )
+
+        # OpenAI API呼び出し
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "あなたはプロのプロフィール作成者です。"},
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        # GPT-4から生成された新しいプロフィールを抽出
+        updated_profile = response.choices[0].message.content.strip()
+
+        # 新しいプロフィールをユーザーのuser_manualに保存
+        user.user_manual = updated_profile
+        user.save()
+
+        return Response({"updated_profile": updated_profile}, status=status.HTTP_200_OK)
+
+    except User.DoesNotExist:
+        return Response({'error': 'ユーザーが見つかりません'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
