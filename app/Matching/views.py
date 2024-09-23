@@ -16,12 +16,13 @@ def match_user(request):
 
         # ログイン中のユーザーの趣味を取得
         current_user_hobbies = set(current_user.hobbys)
+        matched_user_ids = set(current_user.matched_users)  # 既にマッチングしたユーザーのIDリスト
 
         if not current_user_hobbies:
             return Response({"error": "ログイン中のユーザーの趣味が設定されていません"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # すべてのユーザーを取得（ログイン中のユーザーを除外）
-        other_users = User.objects.exclude(user_id=current_user.user_id)
+        # すべてのユーザーを取得（ログイン中のユーザーと既にマッチングしたユーザーを除外）
+        other_users = User.objects.exclude(user_id__in=matched_user_ids).exclude(user_id=current_user.user_id)
 
         if not other_users.exists():
             return Response({"error": "他のユーザーが見つかりませんでした"}, status=status.HTTP_404_NOT_FOUND)
@@ -63,6 +64,12 @@ def match_user(request):
             "user_manual": matched_user.user_manual,
             "snsid": matched_user.snsid,
         }
+
+        # マッチング履歴を更新（現在のユーザーとマッチングしたユーザーの両方に追加）
+        current_user.matched_users.append(matched_user.user_id)
+        matched_user.matched_users.append(current_user.user_id)
+        current_user.save()
+        matched_user.save()
 
         return Response({"matched_user": matched_user_info}, status=status.HTTP_200_OK)
 
