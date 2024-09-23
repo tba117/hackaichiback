@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
+from django.http import JsonResponse
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED, HTTP_500_INTERNAL_SERVER_ERROR, HTTP_200_OK
 from django.contrib.auth import login, get_user_model
 from django.utils.decorators import method_decorator
@@ -103,7 +104,7 @@ class UserUpdateView(APIView):
 
         if not user:
             # ユーザーが存在しない場合
-            return Response({'message': 'ユーザーが見つかりません'}, status=404)
+            return self.add_cors_headers(JsonResponse({'message': 'ユーザーが見つかりません'}, status=404))
         
         serializer = UserUpdateSerializer(user, data=request.data, partial=True) # partial=True: すべてのフィールドが送信されなくても更新可
         if serializer.is_valid():
@@ -121,10 +122,21 @@ class UserUpdateView(APIView):
                     "snsid": user.snsid,
                 }
             }
-            return Response(response_data, status=200)
+            return self.add_cors_headers(Response(response_data, status=200))
         else:
-            return Response({'message': 'ユーザー情報更新失敗', 'errors': serializer.errors}, status=400)
+            return self.add_cors_headers(Response({'message': 'ユーザー情報更新失敗', 'errors': serializer.errors}, status=400))
+    
+    # CORSヘッダーを追加するメソッド
+    def add_cors_headers(self, response):
+        response['Access-Control-Allow-Origin'] = 'http://localhost:3000'  # 必要なオリジンを指定
+        response['Access-Control-Allow-Methods'] = 'PATCH, OPTIONS'  # 許可するHTTPメソッド
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'  # 許可するヘッダー
+        return response
 
+    # OPTIONSリクエストへの対応（プリフライトリクエスト処理）
+    def options(self, request, *args, **kwargs):
+        response = JsonResponse({})
+        return self.add_cors_headers(response)
 
 # アカウント削除
 class CloseAccountView(APIView):
