@@ -148,8 +148,10 @@ def update_profile_with_feedback(request, user_id):
 
 
 # アドバイス生成
-@shared_task
-def generate_advice_task(user_id):
+# タスクを呼び出す
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def generate_advice_task(request, user_id):
     print("aaa")
     try:
         # マッチングしたユーザーを取得
@@ -201,7 +203,7 @@ def generate_advice_task(user_id):
 # タスクを呼び出す
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def generate_advice(request, user_id):
+def generate_advice_aa(request, user_id):
     # 非同期タスクを実行し、タスクIDを取得
     task = generate_advice_task.delay(user_id)
     return Response({"task_id": task.id, "message": "タスクがキューに追加されました。結果を確認してください。"}, status=status.HTTP_200_OK)
