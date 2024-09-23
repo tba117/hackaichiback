@@ -94,8 +94,8 @@ class UserDetailView(APIView):
 # ユーザー情報更新
 class UserUpdateView(APIView):
     # ユーザー認証が必要
-    authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     @method_decorator(csrf_exempt)
     def patch(self, request):
