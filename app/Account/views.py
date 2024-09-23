@@ -103,7 +103,7 @@ class UserUpdateView(APIView):
 
         if not user:
             # ユーザーが存在しない場合
-            return self.add_cors_headers(JsonResponse({'message': 'ユーザーが見つかりません'}, status=404))
+            return JsonResponse({'message': 'ユーザーが見つかりません'}, status=404)
         
         serializer = UserUpdateSerializer(user, data=request.data, partial=True) # partial=True: すべてのフィールドが送信されなくても更新可
         if serializer.is_valid():
@@ -121,9 +121,9 @@ class UserUpdateView(APIView):
                     "snsid": user.snsid,
                 }
             }
-            return self.add_cors_headers(Response(response_data, status=200))
+            return Response(response_data, status=200)
         else:
-            return self.add_cors_headers(Response({'message': 'ユーザー情報更新失敗', 'errors': serializer.errors}, status=400))
+            return Response({'message': 'ユーザー情報更新失敗', 'errors': serializer.errors}, status=400)
     
     # CORSヘッダーを追加するメソッド
     def add_cors_headers(self, response):
