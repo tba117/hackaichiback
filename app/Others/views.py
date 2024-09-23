@@ -147,7 +147,7 @@ def update_profile_with_feedback(request, user_id):
 
 
 # アドバイス生成
-@shared_task
+# @shared_task
 def generate_advice_task(request, user_id):
     try:
         # マッチングしたユーザーを取得
