@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED, HTTP_500_INTERNAL_SERVER_ERROR, HTTP_200_OK
 from django.contrib.auth import login, get_user_model
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -48,7 +49,7 @@ class LoginView(APIView):  #ログイン
 class UserDetailView(APIView):
     permission_classes = [AllowAny]
 
-    @csrf_exempt  # CSRFトークンを無視
+    @method_decorator(csrf_exempt)
     def get(self, request, user_id):
         # ユーザー情報の取得
         user = User.objects.filter(user_id=user_id).first()
@@ -64,8 +65,10 @@ class UserDetailView(APIView):
                 "username": user.username,
                 "self_introduction": user.self_introduction,
                 "department": user.department,
-                "skil": user.skil,
-                "hobby": user.hobby
+                "skils": user.skils,
+                "hobbys": user.hobbys,
+                "user_manual": user.user_manual,
+                "snsid": user.snsid
             }
         }
 
@@ -95,8 +98,10 @@ class UserUpdateView(APIView):
                     "username": user.username,
                     "self_introduction": user.self_introduction,
                     "department": user.department,
-                    "skil": user.skil,
-                    "hobby": user.hobby,
+                    "skils": user.skils,
+                    "hobbys": user.hobbys,
+                    "user_manual": user.user_manual,
+                    "snsid": user.snsid,
                 }
             }
             return Response(response_data, status=200)

@@ -50,14 +50,24 @@ class UserUpdateSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=30, allow_blank=True)
     self_introduction = serializers.CharField(max_length=300, allow_blank=True)
     department = serializers.CharField(max_length=30, allow_blank=True)
-    skil = serializers.CharField(max_length=30, allow_blank=True)
-    hobby = serializers.CharField(max_length=30, allow_blank=True)
+    skils = serializers.ListField(
+        child=serializers.CharField(max_length=100, allow_blank=True),  # 各趣味は最大100文字
+        allow_empty=True
+    )
+    hobbys = serializers.ListField(
+        child=serializers.CharField(max_length=100, allow_blank=True),  # 各趣味は最大100文字
+        allow_empty=True
+    )
+    user_manual = serializers.CharField(allow_blank=True)
+    snsid = serializers.CharField(max_length=30, allow_blank=True)
 
     def update(self, instance, validated_data):
         instance.username = validated_data.get('username', instance.username)
         instance.self_introduction = validated_data.get('self_introduction', instance.self_introduction)
         instance.department = validated_data.get('department', instance.department)
-        instance.skil = validated_data.get('skil', instance.skil)
-        instance.hobby = validated_data.get('hobby', instance.hobby)
+        instance.skils = validated_data.get('skils', instance.skils)
+        instance.hobbys = validated_data.get('hobbys', instance.hobbys)
+        instance.user_manual = validated_data.get('user_manual', instance.user_manual)
+        instance.snsid = validated_data.get('snsid', instance.snsid)
         instance.save()
         return instance

@@ -6,6 +6,7 @@ from django.contrib.auth.models import (BaseUserManager,
                                         AbstractBaseUser,
                                         PermissionsMixin)
 from django.utils.translation import gettext_lazy as _
+from django.contrib.postgres.fields import ArrayField
 
 
 class UserManager(BaseUserManager):
@@ -42,8 +43,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=50)
     self_introduction = models.CharField(max_length=200, blank=True)
     department = models.CharField(max_length=50, blank=True)
-    skil = models.CharField(max_length=50, blank=True)
-    hobby = models.CharField(max_length=50, blank=True)
+    hobbys = models.JSONField(blank=True, null=True, default=list)
+    hobbys = models.JSONField(blank=True, null=True, default=list)  # 例: ["音楽", "映画", "読書"] のように配列形式で保存
+    user_manual = models.TextField(blank=True)
+    snsid = models.CharField(max_length=50, blank=True)
     is_active = models.BooleanField(default=True)  # アカウントが有効か
     is_staff = models.BooleanField(default=False)  # 管理画面にアクセス可能か
 
