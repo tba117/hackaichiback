@@ -8,6 +8,7 @@ from django.contrib.auth import login, get_user_model
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .serializers import RegisterSerializer, LoginSerializer, UserUpdateSerializer
 from ..models import AccessToken
@@ -94,6 +95,7 @@ class UserDetailView(APIView):
 # ユーザー情報更新
 class UserUpdateView(APIView):
     # ユーザー認証が必要
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @method_decorator(csrf_exempt)
