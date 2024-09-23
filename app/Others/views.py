@@ -157,9 +157,6 @@ def generate_advice(request, user_id):
         profile = user.user_manual  # 生成されたプロフィール
         hobbies = ', '.join(user.hobbys) if user.hobbys else "趣味は設定されていません"
         skills = ', '.join(user.skils) if user.skils else "スキルは設定されていません"
-        
-        # 以前に保存された感想（感想が保存されていると仮定）
-        feedback = request.data.get('feedback', "感想が記録されていません")
 
         # GPT-4に送信するプロンプトの作成
         prompt = f"""
