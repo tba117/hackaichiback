@@ -152,6 +152,7 @@ def generate_advice_task(request, user_id):
     try:
         # マッチングしたユーザーを取得
         user = User.objects.get(user_id=user_id)
+        print('user: ', user)
         
         # 必要な情報を取得
         profile = user.user_manual  # 生成されたプロフィール
@@ -178,8 +179,9 @@ def generate_advice_task(request, user_id):
                 {"role": "system", "content": "あなたは有能なカウンセラーです。"},
                 {"role": "user", "content": prompt}
             ],
-            timeout=20  # 20秒でタイムアウトを設定
         )
+
+        print('chatgpt:', response)
 
         # GPT-4から生成されたアドバイスを抽出
         advice = response.choices[0].message.content.strip()
