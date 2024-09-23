@@ -48,6 +48,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # 追加 (できるだけ上の方に配置)
+    'django.middleware.common.CommonMiddleware',  # 追加
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,7 +57,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # 追加
     'whitenoise.middleware.WhiteNoiseMiddleware',  # 追加
 ]
 
@@ -145,13 +146,6 @@ MEDIA_ROOT = BASE_DIR / 'images'
 
 AUTH_USER_MODEL = 'app.User'  # appはアプリケーション名
 
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-}
-
 # オプション: JWTの有効期限をカスタマイズ
 from datetime import timedelta
 
@@ -173,3 +167,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
+
+# 信頼できるオリジンをCSRF対策として追加
+CSRF_TRUSTED_ORIGINS = [
+    'https://aichihack-back-153bffff1dd9.herokuapp.com',
+    'http://localhost:3000',
+]
