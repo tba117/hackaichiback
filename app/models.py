@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     hobbys = models.JSONField(blank=True, null=True, default=list)  # 例: ["音楽", "映画", "読書"] のように配列形式で保存
     user_manual = models.TextField(blank=True)
     snsid = models.CharField(max_length=50, blank=True)
-    matched_user = models.JSONField(default=list, blank=True)  # マッチングしたユーザーIDを保存
+    matched_users = models.JSONField(default=list, blank=True)  # マッチングしたユーザーIDを保存
     is_active = models.BooleanField(default=True)  # アカウントが有効か
     is_staff = models.BooleanField(default=False)  # 管理画面にアクセス可能か
 
