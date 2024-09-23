@@ -182,3 +182,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://aichihack-back-153bffff1dd9.herokuapp.com',
     'http://localhost:3000',
 ]
+
+# Whitenoise で提供される静的ファイルに CORS を許可しない
+WHITENOISE_ALLOW_ALL_ORIGINS = False
