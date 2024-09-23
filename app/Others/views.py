@@ -84,6 +84,10 @@ def generate_profile(request, user_id):
         # GPT-4から生成されたプロフィールを抽出
         generated_profile = response.choices[0].message.content.strip()
 
+        # 生成されたプロフィールをユーザーのuser_manualに保存
+        user.user_manual = generated_profile
+        user.save()
+
         return Response({"profile": generated_profile}, status=status.HTTP_200_OK)
 
     except Exception as e:
