@@ -1,6 +1,7 @@
 from django.urls import path
 from .Account import views as account_views
 from .Others import views as other_views
+from .Matching import views as matching_views
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -19,6 +20,8 @@ urlpatterns = [
 
     path('generate-questions/<str:user_id>/', other_views.generate_questions, name='generate_questions'),
     path('generate-profile/<str:user_id>/', other_views.generate_profile, name='generate_profile'),
+
+    path('matching/', matching_views.match_user, name='matching'),
 
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # JWTトークンの取得
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), # JWTトークンのリフレッシュ
