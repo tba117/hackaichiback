@@ -20,6 +20,7 @@ urlpatterns = [
 
     path('generate-questions/<str:user_id>/', other_views.generate_questions, name='generate_questions'),
     path('generate-profile/<str:user_id>/', other_views.generate_profile, name='generate_profile'),
+    path('get_task_status/<str:tesk_id>/', other_views.get_task_status, name='generate_profile'),
 
     path('matching/', matching_views.match_user, name='matching'),
     path('get_matched_users/', matching_views.get_matched_users, name='matching-list'),
