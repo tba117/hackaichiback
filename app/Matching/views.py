@@ -1,5 +1,6 @@
 import random
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,6 +8,7 @@ from rest_framework import status
 User = get_user_model()
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])  # 認証済みユーザーのみ許可
 def match_user(request):
     try:
         # ログイン中のユーザーを取得
