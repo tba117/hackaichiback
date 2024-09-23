@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'rest_framework', # 追加
     'app.apps.AppConfig', # 追加
     'corsheaders', # 追加
-    'rest_framework_simplejwt.token_blacklist',  # JWTトークンの無効化をサポート
+    # 'rest_framework_simplejwt.token_blacklist',  # JWTトークンの無効化をサポート
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -159,8 +160,8 @@ AUTH_USER_MODEL = 'app.User'  # appはアプリケーション名
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),  # アクセストークンの有効期限
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),  # リフレッシュトークンの有効期限
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=60),  # アクセストークンの有効期限
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=60),  # リフレッシュトークンの有効期限
     'ROTATE_REFRESH_TOKENS': True,  # リフレッシュ時に新しいリフレッシュトークンを発行する
     'BLACKLIST_AFTER_ROTATION': True,  # リフレッシュ後、古いトークンを無効にする
 }
@@ -169,9 +170,9 @@ import os
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT認証のみを使用
-    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
 
 # 信頼できるオリジンをCSRF対策として追加

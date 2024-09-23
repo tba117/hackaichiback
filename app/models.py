@@ -39,7 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=50)
     self_introduction = models.CharField(max_length=200, blank=True)
     department = models.CharField(max_length=50, blank=True)
-    hobbys = models.JSONField(blank=True, null=True, default=list)
+    skils = models.JSONField(blank=True, null=True, default=list)
     hobbys = models.JSONField(blank=True, null=True, default=list)  # 例: ["音楽", "映画", "読書"] のように配列形式で保存
     user_manual = models.TextField(blank=True)
     snsid = models.CharField(max_length=50, blank=True)

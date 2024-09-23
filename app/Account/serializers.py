@@ -71,3 +71,9 @@ class UserUpdateSerializer(serializers.Serializer):
         instance.snsid = validated_data.get('snsid', instance.snsid)
         instance.save()
         return instance
+    
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['user_id', 'username', 'self_introduction', 'department', 'skils', 'hobbys', 'user_manual', 'snsid']

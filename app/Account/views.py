@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 from django.http import JsonResponse
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED, HTTP_500_INTERNAL_SERVER_ERROR, HTTP_200_OK
@@ -27,17 +28,15 @@ class RegisterView(APIView):
             # ユーザー登録後にログインさせるための処理
             login(request, user)
 
-            # JWTトークンを生成
-            refresh = RefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
+            # トークンを生成
+            token, created = Token.objects.get_or_create(user=user)
 
             # トークンとユーザー情報を返す
             return Response({
                 'detail': "アカウント登録が成功しました。",
                 'error': 0,
-                'refresh': str(refresh),  # リフレッシュトークン
-                'access': access_token,   # アクセストークン
-                'user_id': user.user_id   # ユーザーID
+                'token': token.key,  # トークン
+                'user_id': user.user_id  # ユーザーID
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
     
@@ -51,12 +50,12 @@ class LoginView(APIView):  #ログイン
         if serializer.is_valid():
             user = serializer.validated_data['user']
             login(request, user)
-            refresh = RefreshToken.for_user(user)  # JWTトークンを生成
+            # トークンを取得または生成
+            token, created = Token.objects.get_or_create(user=user)
             return Response({
                 'detail': "ログインが成功しました。",
                 'error': 0,
-                'refresh': str(refresh),  # リフレッシュトークン
-                'access': str(refresh.access_token),  # アクセストークン
+                'token': token.key,  # トークン
                 'user_id': user.user_id
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
@@ -95,7 +94,7 @@ class UserDetailView(APIView):
 # ユーザー情報更新
 class UserUpdateView(APIView):
     # ユーザー認証が必要
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     @method_decorator(csrf_exempt)
@@ -126,22 +125,11 @@ class UserUpdateView(APIView):
             return Response(response_data, status=200)
         else:
             return Response({'message': 'ユーザー情報更新失敗', 'errors': serializer.errors}, status=400)
-    
-    # CORSヘッダーを追加するメソッド
-    def add_cors_headers(self, response):
-        response['Access-Control-Allow-Origin'] = 'http://localhost:3000'  # 必要なオリジンを指定
-        response['Access-Control-Allow-Methods'] = 'PATCH, OPTIONS'  # 許可するHTTPメソッド
-        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'  # 許可するヘッダー
-        return response
-
-    # OPTIONSリクエストへの対応（プリフライトリクエスト処理）
-    def options(self, request, *args, **kwargs):
-        response = JsonResponse({})
-        return self.add_cors_headers(response)
 
 # アカウント削除
 class CloseAccountView(APIView):
     # ユーザー認証が必要
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     
     def post(self, request, user_id):
