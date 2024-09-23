@@ -15,6 +15,21 @@ def match_user(request):
         # ログイン中のユーザーを取得
         current_user = request.user
 
+        # 既にマッチングしている相手がいる場合、そのユーザー情報を返す
+        if current_user.current_match:
+            matched_user = current_user.current_match
+            matched_user_info = {
+                "user_id": matched_user.user_id,
+                "username": matched_user.username,
+                "self_introduction": matched_user.self_introduction,
+                "department": matched_user.department,
+                "skils": matched_user.skils,
+                "hobbys": matched_user.hobbys,
+                "user_manual": matched_user.user_manual,
+                "snsid": matched_user.snsid,
+            }
+            return Response({"matched_user": matched_user_info}, status=status.HTTP_200_OK)
+
         # ログイン中のユーザーの趣味を取得
         current_user_hobbies = set(current_user.hobbys)
         matched_user_ids = set(current_user.matched_users)  # 既にマッチングしたユーザーのIDリスト
@@ -66,9 +81,13 @@ def match_user(request):
             "snsid": matched_user.snsid,
         }
 
-        # マッチング履歴を更新（現在のユーザーとマッチングしたユーザーの両方に追加）
+        # 現在のユーザーとマッチング相手にマッチング履歴を保存
         current_user.matched_users.append(matched_user.user_id)
         matched_user.matched_users.append(current_user.user_id)
+
+        # 現在のマッチング相手を設定
+        current_user.current_match = matched_user
+        matched_user.current_match = current_user
         current_user.save()
         matched_user.save()
 
