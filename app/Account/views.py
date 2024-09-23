@@ -91,6 +91,7 @@ class UserDetailView(APIView):
     
 
 # ユーザー情報更新
+@csrf_exempt
 class UserUpdateView(APIView):
     # ユーザー認証が必要
     permission_classes = [IsAuthenticated]
