@@ -7,6 +7,7 @@ from rest_framework import status
 
 User = get_user_model()
 
+# マッチング
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])  # 認証済みユーザーのみ許可
 def match_user(request):
@@ -72,6 +73,39 @@ def match_user(request):
         matched_user.save()
 
         return Response({"matched_user": matched_user_info}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# マッチングした人リスト
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # 認証済みユーザーのみ許可
+def get_matched_users(request):
+    try:
+        # ログイン中のユーザーを取得
+        current_user = request.user
+
+        # マッチングしたユーザーIDを取得
+        matched_user_ids = current_user.matched_users
+
+        # マッチングしたユーザーがいない場合
+        if not matched_user_ids:
+            return Response({"message": "まだマッチングしたユーザーがいません"}, status=status.HTTP_404_NOT_FOUND)
+
+        # マッチングしたユーザー情報を取得
+        matched_users = User.objects.filter(user_id__in=matched_user_ids)
+
+        matched_user_info = [
+            {
+                "user_id": user.user_id,
+                "username": user.username,
+                "department": user.department,
+                "discord": user.snsid,  # Discordの情報はsnsideに保存されていると仮定
+            }
+            for user in matched_users
+        ]
+
+        return Response({"matched_users": matched_user_info}, status=status.HTTP_200_OK)
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
