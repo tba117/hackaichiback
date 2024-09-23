@@ -170,7 +170,8 @@ def generate_advice(request, user_id):
         2. 趣味: {hobbies}
         3. スキル: {skills}
 
-        この情報に基づいて、この人と親しみやすく、興味を持たれるような話し方や話題のアドバイスをお願いします。
+        この情報に基づいて、この人と親しみやすく、興味を持たれるような話し方や話題のアドバイスを5つお願いします。
+        アドバイスごとの\nは一つにしてください。アドバイスをこちらでjson形式でまとめるので、番号付きでアドバイスのみ生成してください。
         """
 
         # OpenAI API呼び出し
@@ -184,8 +185,10 @@ def generate_advice(request, user_id):
 
         # GPT-4から生成されたアドバイスを抽出
         advice = response.choices[0].message.content.strip()
+        # 改行でリストに分割（番号付きのアドバイスを想定）
+        advice_list = [advice.strip() for advice in advice.split('\n') if advice.strip()]
 
-        return Response({"advice": advice}, status=status.HTTP_200_OK)
+        return Response({"advice": advice_list}, status=status.HTTP_200_OK)
 
     except User.DoesNotExist:
         return Response({"error": "ユーザーが見つかりません"}, status=status.HTTP_404_NOT_FOUND)
