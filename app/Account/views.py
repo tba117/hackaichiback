@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.authentication import SessionAuthentication
 from rest_framework import status
 from django.http import JsonResponse
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED, HTTP_500_INTERNAL_SERVER_ERROR, HTTP_200_OK
@@ -94,7 +95,7 @@ class UserDetailView(APIView):
 # ユーザー情報更新
 class UserUpdateView(APIView):
     # ユーザー認証が必要
-    # authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
     @method_decorator(csrf_exempt)
