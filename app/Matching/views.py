@@ -100,7 +100,7 @@ def get_matched_users(request):
                 "user_id": user.user_id,
                 "username": user.username,
                 "department": user.department,
-                "discord": user.snsid,  # Discordの情報はsnsideに保存されていると仮定
+                "discord": user.snsid,  # Discordの情報はsnsidに保存されていると仮定
             }
             for user in matched_users
         ]

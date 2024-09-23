@@ -22,7 +22,7 @@ urlpatterns = [
     path('generate-profile/<str:user_id>/', other_views.generate_profile, name='generate_profile'),
 
     path('matching/', matching_views.match_user, name='matching'),
-    path('get_matched_users/', matching_views.get_matched_users, name='matching'),
+    path('get_matched_users/', matching_views.get_matched_users, name='matching-list'),
 
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # JWTトークンの取得
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), # JWTトークンのリフレッシュ
