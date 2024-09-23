@@ -1,5 +1,6 @@
 import openai
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework import status
@@ -53,6 +54,7 @@ def generate_questions(request, user_id):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+
 # 回答から取説生成
 @api_view(['POST'])
 def generate_profile(request, user_id):
@@ -139,5 +141,53 @@ def update_profile_with_feedback(request, user_id):
 
     except User.DoesNotExist:
         return Response({'error': 'ユーザーが見つかりません'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# アドバイス生成
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # 認証済みユーザーのみ許可
+def generate_advice(request, user_id):
+    try:
+        # マッチングしたユーザーを取得
+        user = User.objects.get(user_id=user_id)
+        
+        # 必要な情報を取得
+        profile = user.user_manual  # 生成されたプロフィール
+        hobbies = ', '.join(user.hobbys) if user.hobbys else "趣味は設定されていません"
+        skills = ', '.join(user.skils) if user.skils else "スキルは設定されていません"
+        
+        # 以前に保存された感想（感想が保存されていると仮定）
+        feedback = request.data.get('feedback', "感想が記録されていません")
+
+        # GPT-4に送信するプロンプトの作成
+        prompt = f"""
+        あなたの相手は {user.username} さんです。
+        以下の情報を元に、この人と話すときのコツやアドバイスを生成してください：
+
+        1. プロフィール: {profile}
+        2. 趣味: {hobbies}
+        3. スキル: {skills}
+
+        この情報に基づいて、この人と親しみやすく、興味を持たれるような話し方や話題のアドバイスをお願いします。
+        """
+
+        # OpenAI API呼び出し
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "あなたは有能なカウンセラーです。"},
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        # GPT-4から生成されたアドバイスを抽出
+        advice = response.choices[0].message.content.strip()
+
+        return Response({"advice": advice}, status=status.HTTP_200_OK)
+
+    except User.DoesNotExist:
+        return Response({"error": "ユーザーが見つかりません"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
