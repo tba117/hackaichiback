@@ -24,7 +24,7 @@ class RegisterView(APIView):
 
             # ユーザー登録後にログインさせるための処理
             login(request, user)
-            
+
             # JWTトークンを生成
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
@@ -95,6 +95,7 @@ class UserUpdateView(APIView):
     # ユーザー認証が必要
     permission_classes = [IsAuthenticated]
 
+    @method_decorator(csrf_exempt)
     def patch(self, request):
         # ログインしているユーザーのみが自分の情報を更新できる
         user = request.user  # ログイン中のユーザー情報を取得
