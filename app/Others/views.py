@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework import status
 import os
+from celery import shared_task
 
 User = get_user_model()
 
@@ -146,9 +147,8 @@ def update_profile_with_feedback(request, user_id):
 
 
 # アドバイス生成
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])  # 認証済みユーザーのみ許可
-def generate_advice(request, user_id):
+@shared_task
+def generate_advice_task(request, user_id):
     try:
         # マッチングしたユーザーを取得
         user = User.objects.get(user_id=user_id)
@@ -177,7 +177,8 @@ def generate_advice(request, user_id):
             messages=[
                 {"role": "system", "content": "あなたは有能なカウンセラーです。"},
                 {"role": "user", "content": prompt}
-            ]
+            ],
+            timeout=20  # 20秒でタイムアウトを設定
         )
 
         # GPT-4から生成されたアドバイスを抽出
@@ -191,3 +192,11 @@ def generate_advice(request, user_id):
         return Response({"error": "ユーザーが見つかりません"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# タスクを呼び出す
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def generate_advice(request, user_id):
+    result = generate_advice_task.delay(user_id)  # 非同期タスクを実行
+    return Response({"message": "タスクがキューに追加されました。結果を確認してください。"}, status=status.HTTP_200_OK)
