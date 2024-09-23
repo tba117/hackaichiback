@@ -20,8 +20,23 @@ class RegisterView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()  # ここでcreate_userが呼ばれる
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            user = serializer.save()  # ここでcreate_userが呼ばれる
+
+            # ユーザー登録後にログインさせるための処理
+            login(request, user)
+            
+            # JWTトークンを生成
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
+            # トークンとユーザー情報を返す
+            return Response({
+                'detail': "アカウント登録が成功しました。",
+                'error': 0,
+                'refresh': str(refresh),  # リフレッシュトークン
+                'access': access_token,   # アクセストークン
+                'user_id': user.user_id   # ユーザーID
+            }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
     
 
