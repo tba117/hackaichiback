@@ -192,39 +192,13 @@ def generate_advice_task(request, user_id):
         # 改行でリストに分割（番号付きのアドバイスを想定）
         advice_list = [advice.strip() for advice in advice.split('\n') if advice.strip()]
 
+        # 新しいプロフィールをユーザーのuser_manualに保存
+        user.advice = advice_list
+        user.save()
+
         return Response({"advice": advice_list}, status=status.HTTP_200_OK)
 
     except User.DoesNotExist:
         return Response({"error": "ユーザーが見つかりません"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# タスクを呼び出す
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def generate_advice_aa(request, user_id):
-    # 非同期タスクを実行し、タスクIDを取得
-    task = generate_advice_task.delay(user_id)
-    return Response({"task_id": task.id, "message": "タスクがキューに追加されました。結果を確認してください。"}, status=status.HTTP_200_OK)
-
-
-# タスクの状態と結果を取得するエンドポイント
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_task_status(request, task_id):
-    task_result = AsyncResult(task_id)
-
-    # タスクの状態を確認
-    if task_result.state == 'SUCCESS':
-        # タスクが成功した場合、結果を返す
-        return Response({"status": task_result.state, "result": task_result.result}, status=status.HTTP_200_OK)
-    elif task_result.state == 'PENDING':
-        # タスクがまだ実行中の場合
-        return Response({"status": task_result.state, "message": "タスクが実行中です。"}, status=status.HTTP_202_ACCEPTED)
-    elif task_result.state == 'FAILURE':
-        # タスクが失敗した場合のエラーメッセージを返す
-        return Response({"status": task_result.state, "message": str(task_result.info)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    else:
-        # その他の状態
-        return Response({"status": task_result.state, "message": "タスクの状態が不明です。"}, status=status.HTTP_400_BAD_REQUEST)
