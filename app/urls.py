@@ -27,6 +27,7 @@ urlpatterns = [
 
     path('update_profile_with_feedback/<str:user_id>/', other_views.update_profile_with_feedback, name='feedback'),
     path('generate-advice/<user_id>/', other_views.generate_advice_save, name='advice'),
+    path('get-advice/<user_id>/', other_views.get_saved_advice, name='advice'),
 
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # JWTトークンの取得
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), # JWTトークンのリフレッシュ
