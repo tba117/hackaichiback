@@ -37,7 +37,7 @@ def generate_questions(request, user_id):
 
         # OpenAI API呼び出し
         response = openai.chat.completions.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "あなたは有能な心理マスターです。"},
                 {"role": "user", "content": prompt}
@@ -79,7 +79,7 @@ def generate_profile(request, user_id):
 
         # OpenAI API呼び出し
         response = openai.chat.completions.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "あなたはプロのプロフィール作成者です。"},
                 {"role": "user", "content": prompt}
@@ -125,7 +125,7 @@ def update_profile_with_feedback(request, user_id):
 
         # OpenAI API呼び出し
         response = openai.chat.completions.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "あなたはプロのプロフィール作成者です。"},
                 {"role": "user", "content": prompt}
@@ -185,7 +185,7 @@ def generate_advice_save(request, user_id):
 
         # OpenAI API呼び出し
         response = openai.chat.completions.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "あなたは有能なカウンセラーです。"},
                 {"role": "user", "content": prompt}
