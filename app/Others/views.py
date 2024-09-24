@@ -149,10 +149,11 @@ def update_profile_with_feedback(request, user_id):
 
 # アドバイス生成
 # タスクを呼び出す
+# アドバイス生成と保存
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def generate_advice_task(request, user_id):
-    print("aaa")
+def generate_advice_save(request, user_id):
+    print("アドバイス生成開始")
     try:
         # マッチングしたユーザーを取得
         user = User.objects.get(user_id=user_id)
@@ -189,14 +190,32 @@ def generate_advice_task(request, user_id):
 
         # GPT-4から生成されたアドバイスを抽出
         advice = response.choices[0].message.content.strip()
-        # 改行でリストに分割（番号付きのアドバイスを想定）
-        advice_list = [advice.strip() for advice in advice.split('\n') if advice.strip()]
 
-        # 新しいプロフィールをユーザーのuser_manualに保存
-        user.advice = advice_list
+        # アドバイスをユーザーのフィールドに保存
+        user.advice = advice
         user.save()
 
-        return Response({"advice": advice_list}, status=status.HTTP_200_OK)
+        return Response({"message": "アドバイスが保存されました"}, status=status.HTTP_200_OK)
+
+    except User.DoesNotExist:
+        return Response({"error": "ユーザーが見つかりません"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# 保存されたアドバイスを取得
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_saved_advice(request, user_id):
+    try:
+        # マッチングしたユーザーを取得
+        user = User.objects.get(user_id=user_id)
+
+        # アドバイスが存在するか確認
+        if user.advice:
+            return Response({"advice": user.advice}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "アドバイスがまだ生成されていません"}, status=status.HTTP_404_NOT_FOUND)
 
     except User.DoesNotExist:
         return Response({"error": "ユーザーが見つかりません"}, status=status.HTTP_404_NOT_FOUND)
