@@ -180,6 +180,8 @@ def generate_advice_save(request, user_id):
         アドバイスごとの\nは一つにしてください。番号付きでアドバイスのみ生成してください。
         """
 
+        print(prompt)
+
         # OpenAI API呼び出し
         response = openai.chat.completions.create(
             model="gpt-4",
