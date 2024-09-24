@@ -161,8 +161,11 @@ def generate_advice_save(request, user_id):
         
         # 必要な情報を取得
         profile = user.user_manual  # 生成されたプロフィール
+        print(profile)
         hobbies = ', '.join(user.hobbys) if user.hobbys else "趣味は設定されていません"
+        print(hobbies)
         skills = ', '.join(user.skils) if user.skils else "スキルは設定されていません"
+        print(skills)
 
         # GPT-4に送信するプロンプトの作成
         prompt = f"""
