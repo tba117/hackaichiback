@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'rest_framework', # 追加
     'app.apps.AppConfig', # 追加
     'corsheaders', # 追加
-    # 'rest_framework_simplejwt.token_blacklist',  # JWTトークンの無効化をサポート
     'rest_framework.authtoken',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -183,3 +183,14 @@ CSRF_TRUSTED_ORIGINS = [
 
 # Whitenoise で提供される静的ファイルに CORS を許可しない
 WHITENOISE_ALLOW_ALL_ORIGINS = False
+
+ASGI_APPLICATION = 'project.asgi.application'
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": 'rediss://:p7e46e50767d81cebb364174e1d4f9a14f4e222fde3a4cb2a7886d4b896b638a0@ec2-34-236-76-249.compute-1.amazonaws.com:19190',
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}

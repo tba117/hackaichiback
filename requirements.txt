@@ -25,3 +25,5 @@ djangorestframework-simplejwt
 whitenoise
 openai
 celery
+channels
+channels-redis

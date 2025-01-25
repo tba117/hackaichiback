@@ -56,3 +56,32 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.user_id
+    
+
+# チャットモデル
+# トークルームモデル
+class ChatRoom(models.Model):
+    name = models.CharField(max_length=100, blank=True, null=True)  # 任意のルーム名
+    users = models.ManyToManyField(User, related_name='chat_rooms')
+    created_at = models.DateTimeField(auto_now_add=True)
+    unread_count = models.JSONField(default=dict, blank=True)  # ユーザーごとの未読メッセージ数を管理
+
+    def __str__(self):
+        if self.name:
+            return f"ChatRoom: {self.name}"
+        return f"ChatRoom ({', '.join(user.user_id for user in self.users.all())})"
+
+
+# チャットモデル
+class Chat(models.Model):
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')  # どのトークルームか
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')  # メッセージ送信者
+    message = models.TextField()  # メッセージ内容
+    timestamp = models.DateTimeField(auto_now_add=True)  # メッセージ送信時間
+    is_read = models.BooleanField(default=False)  # メッセージが既読かどうか
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f'Room {self.room.id} - From {self.sender.user_id}: {self.message[:20]}'
