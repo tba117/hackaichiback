@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'corsheaders', # 追加
     'rest_framework.authtoken',
     'channels',
-    'app',
 ]
 
 MIDDLEWARE = [
