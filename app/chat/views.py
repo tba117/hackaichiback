@@ -66,6 +66,27 @@ def create_chat_room(request):
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_chat_rooms(request):
+    """
+    現在ログイン中のユーザーが参加しているチャットルームを取得するAPI
+    """
+    try:
+        # ログイン中のユーザーを取得
+        current_user = request.user
+
+        # ユーザーが参加しているチャットルームを取得
+        chat_rooms = ChatRoom.objects.filter(users=current_user)
+
+        # シリアライズ
+        serializer = ChatRoomSerializer(chat_rooms, many=True)
+
+        return Response({"chat_rooms": serializer.data}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

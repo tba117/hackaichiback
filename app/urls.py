@@ -34,6 +34,7 @@ urlpatterns = [
 
     path('chat-history/<int:room_id>/', chat_views.get_chat_history, name='get_chat_history'),
     path('chat/create/', chat_views.create_chat_room, name='chat_create'),
+    path('chat/get/', chat_views.get_user_chat_rooms, name='chat_get'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
