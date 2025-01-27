@@ -50,7 +50,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # データベースに保存
         sender = await sync_to_async(User.objects.get)(id=sender_id)
-        room = await sync_to_async(ChatRoom.objects.get)(name=self.room_name)
+        room = await sync_to_async(ChatRoom.objects.get_or_create)(name=self.room_name)
         await sync_to_async(Chat.objects.create)(
             room=room,
             sender=sender,
