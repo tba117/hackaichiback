@@ -27,4 +27,4 @@ whitenoise
 openai
 celery
 channels
-channels-redis
+channels-redis==4.2.1
