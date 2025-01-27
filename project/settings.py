@@ -93,9 +93,6 @@ DATABASES = {
         'PASSWORD': 'p067094e3e7eb828f33a2d6a48ff2f9e1f21638ab499c557e1c934b5affb9c378',  # Heroku Postgresで確認したPasswordの値を入力
         'HOST': 'cbec45869p4jbu.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com',  # Heroku Postgresで確認したHostの値を入力
         'PORT': '5432',  # どのDBでもPostgreSQLなら同じ
-        'OPTIONS': {
-            'sslmode': 'require',  # SSL 接続を有効化
-        },
     }
 }
 

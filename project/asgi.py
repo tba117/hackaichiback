@@ -13,5 +13,5 @@ django_asgi_app = get_asgi_application()  # 通常のHTTPリクエストを処�
 import app.routing # なぜかこの行を上の行の後にしないといけない
 application = ProtocolTypeRouter( {
     'http': get_asgi_application(),
-    'websocket': AuthMiddlewareStack( URLRouter( app.routing.websocket_urlpatterns ) ),
+    'websocket': URLRouter( app.routing.websocket_urlpatterns ),
 } )
