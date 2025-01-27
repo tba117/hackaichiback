@@ -46,6 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     matched_users = models.JSONField(default=list, blank=True)  # マッチングしたユーザーIDを保存
     current_match = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True, related_name='current_match_user')  # 現在のマッチング相手
     advice = models.JSONField(blank=True, null=True)
+    related_chat_rooms = models.ManyToManyField('ChatRoom', blank=True, related_name='members')
     is_active = models.BooleanField(default=True)  # アカウントが有効か
     is_staff = models.BooleanField(default=False)  # 管理画面にアクセス可能か
 

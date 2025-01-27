@@ -122,6 +122,8 @@ def match_user(request):
                     name=f"chat_{min(current_user.user_id, matched_user.user_id)}_{max(current_user.user_id, matched_user.user_id)}"
                 )
                 chat_room.users.add(current_user, matched_user)
+                current_user.related_chat_rooms.add(chat_room)
+                matched_user.related_chat_rooms.add(chat_room)
 
             # チャットルームの情報を返す
             chat_room_info = {
