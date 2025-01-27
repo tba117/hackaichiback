@@ -116,10 +116,14 @@ def get_matched_users(request):
 
         matched_user_info = [
             {
-                "user_id": user.user_id,
-                "username": user.username,
-                "department": user.department,
-                "discord": user.snsid,  # Discordの情報はsnsidに保存されていると仮定
+            "user_id": matched_users.user_id,
+            "username": matched_users.username,
+            "self_introduction": matched_users.self_introduction,
+            "department": matched_users.department,
+            "skils": matched_users.skils,
+            "hobbys": matched_users.hobbys,
+            "user_manual": matched_users.user_manual,
+            "snsid": matched_users.snsid,
             }
             for user in matched_users
         ]
