@@ -156,20 +156,33 @@ def get_matched_users(request):
         # マッチングしたユーザー情報を取得
         matched_users = User.objects.filter(user_id__in=matched_user_ids)
 
-        matched_user_info = [
-            {
-            "id": user.id,
-            "user_id": user.user_id,
-            "username": user.username,
-            "self_introduction": user.self_introduction,
-            "department": user.department,
-            "skils": user.skils,
-            "hobbys": user.hobbys,
-            "user_manual": user.user_manual,
-            "snsid": user.snsid,
-            }
-            for user in matched_users
-        ]
+        matched_user_info = []
+        for user in matched_users:
+            # ユーザーごとに関連するチャットルームを取得
+            chat_room = ChatRoom.objects.filter(
+                Q(users=current_user) & Q(users=user)
+            ).distinct().first()
+
+            # チャットルーム情報を作成
+            chat_room_info = {
+                "id": chat_room.id if chat_room else None,
+                "name": chat_room.name if chat_room else None,
+                "users": [u.user_id for u in chat_room.users.all()] if chat_room else []
+            } if chat_room else None
+
+            # ユーザー情報にチャットルーム情報を追加
+            matched_user_info.append({
+                "id": user.id,
+                "user_id": user.user_id,
+                "username": user.username,
+                "self_introduction": user.self_introduction,
+                "department": user.department,
+                "skils": user.skils,
+                "hobbys": user.hobbys,
+                "user_manual": user.user_manual,
+                "snsid": user.snsid,
+                "chat_room": chat_room_info,  # チャットルーム情報を含める
+            })
 
         return Response({"matched_users": matched_user_info}, status=status.HTTP_200_OK)
 
