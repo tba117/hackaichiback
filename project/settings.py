@@ -190,3 +190,5 @@ CACHES = {
         }
     }
 }
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # 追加
