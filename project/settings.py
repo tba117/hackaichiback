@@ -178,7 +178,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # Whitenoise で提供される静的ファイルに CORS を許可しない
-WHITENOISE_ALLOW_ALL_ORIGINS = False
+WHITENOISE_ALLOW_ALL_ORIGINS = True
 
 ASGI_APPLICATION = 'project.asgi.application'  # フロントからリクエストが来た時ここを参照
 CACHES = {
