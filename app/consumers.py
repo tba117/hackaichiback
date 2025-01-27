@@ -2,6 +2,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import ChatRoom, Chat, User
+from asgiref.sync import sync_to_async  # 追加
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -48,9 +49,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sender_id = text_data_json['sender_id']
 
         # データベースに保存
-        sender = await User.objects.get(id=sender_id)
-        room = await ChatRoom.objects.get(name=self.room_name)
-        await Chat.objects.create(
+        sender = await sync_to_async(User.objects.get)(id=sender_id)
+        room = await sync_to_async(ChatRoom.objects.get)(name=self.room_name)
+        await sync_to_async(Chat.objects.create)(
             room=room,
             sender=sender,
             message=message
