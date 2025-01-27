@@ -9,6 +9,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_group_name = f'chat_{self.room_name}'  # グループ名を作成
 
         print('接続しました1')
+        print('room_name', self.room_name)
+        print('room_group_name', self.room_group_name)
 
         # チャットルームに参加
         await self.channel_layer.group_add(
@@ -17,6 +19,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         print('接続しました2')
+        print('room_group_name',self.room_group_name)
+        print('channel_name', self.channel_name)
 
         await self.accept()
 
