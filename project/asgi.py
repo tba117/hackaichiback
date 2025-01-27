@@ -10,7 +10,7 @@ django.setup()
 #application = get_asgi_application()
 django_asgi_app = get_asgi_application()  # 通常のHTTPリクエストを処理する
 
-import app.routing
+import app.routing # なぜかこの行を上の行の後にしないといけない
 application = ProtocolTypeRouter( {
     'http': get_asgi_application(),
     'websocket': AuthMiddlewareStack( URLRouter( app.routing.websocket_urlpatterns ) ),
