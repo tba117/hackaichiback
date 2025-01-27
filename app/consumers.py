@@ -17,7 +17,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         else:
             print('self.channel_layer', self.channel_layer)
             print("Available methods in channel_layer:", dir(self.channel_layer))
-
+            print(help(self.channel_layer.group_add))
+            
         # チャットルームに参加
         await self.channel_layer.group_add(
             self.room_group_name,  # チャットルームを識別するグループ名
