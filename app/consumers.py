@@ -16,6 +16,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             print("チャンネルレイヤーが設定されていません。")
         else:
             print('self.channel_layer', self.channel_layer)
+            print("Available methods in channel_layer:", dir(self.channel_layer))
 
         # チャットルームに参加
         await self.channel_layer.group_add(
