@@ -19,6 +19,7 @@ def match_user(request):
         if current_user.current_match:
             matched_user = current_user.current_match
             matched_user_info = {
+                "id": matched_user.id,
                 "user_id": matched_user.user_id,
                 "username": matched_user.username,
                 "self_introduction": matched_user.self_introduction,
@@ -71,6 +72,7 @@ def match_user(request):
 
         # マッチングしたユーザーの情報を返す
         matched_user_info = {
+            "id": matched_user.id,
             "user_id": matched_user.user_id,
             "username": matched_user.username,
             "self_introduction": matched_user.self_introduction,
@@ -116,6 +118,7 @@ def get_matched_users(request):
 
         matched_user_info = [
             {
+            "id": user.id,
             "user_id": user.user_id,
             "username": user.username,
             "self_introduction": user.self_introduction,

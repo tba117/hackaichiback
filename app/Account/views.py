@@ -36,7 +36,8 @@ class RegisterView(APIView):
                 'detail': "アカウント登録が成功しました。",
                 'error': 0,
                 'token': token.key,  # トークン
-                'user_id': user.user_id  # ユーザーID
+                'user_id': user.user_id,  # ユーザーID
+                'id': user.id,
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
     
@@ -56,6 +57,7 @@ class LoginView(APIView):  #ログイン
                 'detail': "ログインが成功しました。",
                 'error': 0,
                 'token': token.key,  # トークン
+                'id': user.id,
                 'user_id': user.user_id
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
@@ -77,6 +79,7 @@ class UserDetailView(APIView):
         response_data = {
             "message": f"{user.user_id}の詳細",
             "user": {
+                "id": user.id,
                 "user_id": user.user_id,
                 "username": user.username,
                 "self_introduction": user.self_introduction,
