@@ -24,6 +24,11 @@ def match_user(request):
             # 既にマッチングしている相手がいる場合、そのユーザー情報を返す
             if current_user.current_match:
                 matched_user = current_user.current_match
+                # 現在のユーザーとマッチング相手の間のチャットルームを取得
+                chat_room = ChatRoom.objects.filter(
+                    Q(users=current_user) & Q(users=matched_user)
+                ).distinct().first()
+
                 matched_user_info = {
                     "id": matched_user.id,
                     "user_id": matched_user.user_id,
@@ -34,9 +39,14 @@ def match_user(request):
                     "hobbys": matched_user.hobbys,
                     "user_manual": matched_user.user_manual,
                     "snsid": matched_user.snsid,
-                    "chat_room": matched_user.chat_room_info,
                 }
-                return Response({"matched_user": matched_user_info}, status=status.HTTP_200_OK)
+
+                chat_room_info = {
+                    "id": chat_room.id,
+                    "name": chat_room.name,
+                    "users": [user.user_id for user in chat_room.users.all()],
+                }
+                return Response({"matched_user": matched_user_info, "chat_room": chat_room_info}, status=status.HTTP_200_OK)
 
             # ログイン中のユーザーの趣味を取得
             current_user_hobbies = set(current_user.hobbys)
