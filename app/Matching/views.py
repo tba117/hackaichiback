@@ -25,8 +25,6 @@ def match_user(request):
                 "department": matched_user.department,
                 "skils": matched_user.skils,
                 "hobbys": matched_user.hobbys,
-                "user_manual": matched_user.user_manual,
-                "snsid": matched_user.snsid,
             }
             return Response({"matched_user": matched_user_info}, status=status.HTTP_200_OK)
 
