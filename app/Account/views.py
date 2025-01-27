@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .serializers import RegisterSerializer, LoginSerializer, UserUpdateSerializer, UserSerializer
+from .serializers import RegisterSerializer, LoginSerializer, UserUpdateSerializer
 
 User = get_user_model()
 
@@ -67,19 +67,31 @@ class LoginView(APIView):  #ログイン
 class UserDetailView(APIView):
     permission_classes = [AllowAny]
 
+    @method_decorator(csrf_exempt)
     def get(self, request, user_id):
         # ユーザー情報の取得
-        user = User.objects.prefetch_related('related_chat_rooms').filter(user_id=user_id).first()
+        user = User.objects.filter(user_id=user_id).first()
 
-        # シリアライザでデータを取得
-        serializer = UserSerializer(user, context={'include': {'related_chat_rooms': True}})
+        if not user:
+            # ユーザーが存在しない場合
+            return Response({'message': "ユーザーが見つかりません"}, status=404)
+        
         response_data = {
             "message": f"{user.user_id}の詳細",
-            "user": serializer.data  # シリアライザからデータを取得
+            "user": {
+                "id": user.id,
+                "user_id": user.user_id,
+                "username": user.username,
+                "self_introduction": user.self_introduction,
+                "department": user.department,
+                "skils": user.skils,
+                "hobbys": user.hobbys,
+                "user_manual": user.user_manual,
+                "snsid": user.snsid,
+            }
         }
 
         return Response(response_data, status=200)
-
     
 
 # ユーザー情報更新

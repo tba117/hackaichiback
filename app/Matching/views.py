@@ -24,13 +24,6 @@ def match_user(request):
             # 既にマッチングしている相手がいる場合、そのユーザー情報を返す
             if current_user.current_match:
                 matched_user = current_user.current_match
-                # 現在のユーザーとマッチング相手の間のチャットルームを取得
-                chat_room = ChatRoom.objects.filter(
-                    users=current_user
-                ).filter(
-                    users=matched_user
-                ).distinct().first()
-
                 matched_user_info = {
                     "id": matched_user.id,
                     "user_id": matched_user.user_id,
@@ -42,13 +35,7 @@ def match_user(request):
                     "user_manual": matched_user.user_manual,
                     "snsid": matched_user.snsid,
                 }
-
-                chat_room_info = {
-                    "id": chat_room.id,
-                    "name": chat_room.name,
-                    "users": [user.user_id for user in chat_room.users.all()],
-                }
-                return Response({"matched_user": matched_user_info, "chat_room": chat_room_info}, status=status.HTTP_200_OK)
+                return Response({"matched_user": matched_user_info,}, status=status.HTTP_200_OK)
 
             # ログイン中のユーザーの趣味を取得
             current_user_hobbies = set(current_user.hobbys)
@@ -111,28 +98,7 @@ def match_user(request):
             matched_user.current_match = current_user
             current_user.save()
             matched_user.save()
-
-            # チャットルームが存在するか確認し、存在しなければ作成
-            chat_room = ChatRoom.objects.filter(
-                Q(users=current_user) & Q(users=matched_user)
-            ).distinct().first()
-
-            if not chat_room:
-                chat_room = ChatRoom.objects.create(
-                    name=f"chat_{min(current_user.user_id, matched_user.user_id)}_{max(current_user.user_id, matched_user.user_id)}"
-                )
-                chat_room.users.add(current_user, matched_user)
-                current_user.related_chat_rooms.add(chat_room)
-                matched_user.related_chat_rooms.add(chat_room)
-
-            # チャットルームの情報を返す
-            chat_room_info = {
-                "id": chat_room.id,
-                "name": chat_room.name,
-                "users": [user.user_id for user in chat_room.users.all()],
-            }
-
-            return Response({"matched_user": matched_user_info, "chat_room": chat_room_info}, status=status.HTTP_200_OK)
+            return Response({"matched_user": matched_user_info,}, status=status.HTTP_200_OK)
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -158,18 +124,6 @@ def get_matched_users(request):
 
         matched_user_info = []
         for user in matched_users:
-            # ユーザーごとに関連するチャットルームを取得
-            chat_room = ChatRoom.objects.filter(
-                Q(users=current_user) & Q(users=user)
-            ).distinct().first()
-
-            # チャットルーム情報を作成
-            chat_room_info = {
-                "id": chat_room.id if chat_room else None,
-                "name": chat_room.name if chat_room else None,
-                "users": [u.user_id for u in chat_room.users.all()] if chat_room else []
-            } if chat_room else None
-
             # ユーザー情報にチャットルーム情報を追加
             matched_user_info.append({
                 "id": user.id,
@@ -181,7 +135,6 @@ def get_matched_users(request):
                 "hobbys": user.hobbys,
                 "user_manual": user.user_manual,
                 "snsid": user.snsid,
-                "chat_room": chat_room_info,  # チャットルーム情報を含める
             })
 
         return Response({"matched_users": matched_user_info}, status=status.HTTP_200_OK)

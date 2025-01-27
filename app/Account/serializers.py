@@ -74,16 +74,6 @@ class UserUpdateSerializer(serializers.Serializer):
     
 
 class UserSerializer(serializers.ModelSerializer):
-    related_chat_rooms = serializers.SerializerMethodField()
-    
     class Meta:
         model = User
-        fields = ['id', 'user_id', 'username', 'self_introduction', 'department', 'skils', 'hobbys', 'user_manual', 'snsid', 'related_chat_rooms']
-
-    def get_related_chat_rooms(self, obj):
-        from ..chat.serializer import ChatRoomSerializer
-        include_rooms = self.context.get('include', {}).get('related_chat_rooms', False)
-        if include_rooms:
-            rooms = obj.related_chat_rooms.all()
-            return ChatRoomSerializer(rooms, many=True).data
-        return []
+        fields = ['id', 'user_id', 'username', 'self_introduction', 'department', 'skils', 'hobbys', 'user_manual', 'snsid']
