@@ -195,7 +195,11 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('ec2-34-236-76-249.compute-1.amazonaws.com', 19190)], # RedisのURLを環境変数から取得(localの場合は.envファイルから取得) 
+            'hosts': [{
+                'address': ('ec2-34-236-76-249.compute-1.amazonaws.com', 19190),
+                'password': 'p7e46e50767d81cebb364174e1d4f9a14f4e222fde3a4cb2a7886d4b896b638a0',
+                'ssl': True,  # SSLを有効にする
+            }],
         },
     },
 }
