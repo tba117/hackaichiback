@@ -33,6 +33,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), # JWTトークンのリフレッシュ
 
     path('chat-history/<int:room_id>/', chat_views.get_chat_history, name='get_chat_history'),
+    path('chat/create/', chat_views.create_chat_room, name='chat_create'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
