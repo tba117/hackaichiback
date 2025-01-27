@@ -83,7 +83,7 @@ class UserSerializer(serializers.ModelSerializer):
     def get_related_chat_rooms(self, obj):
         # 必要に応じて ChatRoomSerializer をインポートして動的に取得
         from ..chat.serializer import ChatRoomSerializer
-        if hasattr(self.context.get('include', {}), 'related_chat_rooms') and self.context['include']['related_chat_rooms']:
+        if self.context.get('include', {}).get('related_chat_rooms', False):
             rooms = obj.related_chat_rooms.all()
             return ChatRoomSerializer(rooms, many=True).data
         return None
