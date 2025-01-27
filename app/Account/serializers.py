@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate, get_user_model
+from ..chat.serializer import ChatRoomSerializer
 
 # カスタムユーザーモデルを使用している場合は、取得するユーザーモデルを指定する必要
 User = get_user_model()
@@ -74,6 +75,8 @@ class UserUpdateSerializer(serializers.Serializer):
     
 
 class UserSerializer(serializers.ModelSerializer):
+    related_chat_rooms = ChatRoomSerializer(many=True, read_only=True)
+    
     class Meta:
         model = User
         fields = ['id', 'user_id', 'username', 'self_introduction', 'department', 'skils', 'hobbys', 'user_manual', 'snsid', 'related_chat_rooms']
