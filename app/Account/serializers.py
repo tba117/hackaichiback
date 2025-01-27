@@ -81,9 +81,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'user_id', 'username', 'self_introduction', 'department', 'skils', 'hobbys', 'user_manual', 'snsid', 'related_chat_rooms']
 
     def get_related_chat_rooms(self, obj):
-        # 必要に応じて ChatRoomSerializer をインポートして動的に取得
         from ..chat.serializer import ChatRoomSerializer
-        if self.context.get('include', {}).get('related_chat_rooms', False):
+        include_rooms = self.context.get('include', {}).get('related_chat_rooms', False)
+        if include_rooms:
             rooms = obj.related_chat_rooms.all()
             return ChatRoomSerializer(rooms, many=True).data
-        return None
+        return []

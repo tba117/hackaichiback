@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .serializers import RegisterSerializer, LoginSerializer, UserUpdateSerializer
+from .serializers import RegisterSerializer, LoginSerializer, UserUpdateSerializer, UserSerializer
 
 User = get_user_model()
 
@@ -64,13 +64,6 @@ class LoginView(APIView):  #ログイン
     
 
 # ユーザの詳細取得
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from .serializers import UserSerializer
-from ..models import User
-
-
 class UserDetailView(APIView):
     permission_classes = [AllowAny]
 
