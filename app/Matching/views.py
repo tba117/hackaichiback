@@ -26,7 +26,9 @@ def match_user(request):
                 matched_user = current_user.current_match
                 # 現在のユーザーとマッチング相手の間のチャットルームを取得
                 chat_room = ChatRoom.objects.filter(
-                    Q(users=current_user) & Q(users=matched_user)
+                    users=current_user
+                ).filter(
+                    users=matched_user
                 ).distinct().first()
 
                 matched_user_info = {
