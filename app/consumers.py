@@ -13,7 +13,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print('room_group_name', self.room_group_name)
 
         if not self.channel_layer:
-            raise RuntimeError("チャンネルレイヤーが設定されていません。")
+            print("チャンネルレイヤーが設定されていません。")
+        else:
+            print('self.channel_layer', self.channel_layer)
 
         # チャットルームに参加
         await self.channel_layer.group_add(
