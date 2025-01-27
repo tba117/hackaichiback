@@ -8,6 +8,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']  # URLから取得したroom_nameを取得
         self.room_group_name = f'chat_{self.room_name}'  # グループ名を作成
 
+        print('接続しました')
+
         # チャットルームに参加
         await self.channel_layer.group_add(
             self.room_group_name,  # チャットルームを識別するグループ名
@@ -18,6 +20,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # チャットルームから離脱
+        print('切断しました')
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
