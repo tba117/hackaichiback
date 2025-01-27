@@ -93,6 +93,9 @@ DATABASES = {
         'PASSWORD': 'p067094e3e7eb828f33a2d6a48ff2f9e1f21638ab499c557e1c934b5affb9c378',  # Heroku Postgresで確認したPasswordの値を入力
         'HOST': 'cbec45869p4jbu.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com',  # Heroku Postgresで確認したHostの値を入力
         'PORT': '5432',  # どのDBでもPostgreSQLなら同じ
+        'OPTIONS': {
+            'sslmode': 'require',  # SSL 接続を有効化
+        },
     }
 }
 
@@ -139,17 +142,10 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
 ]
-
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # フロントエンドのオリジン
-    'https://aichihack-back-153bffff1dd9.herokuapp.com',  # バックエンドのURL（オプション）
-]
-
 
 MEDIA_URL = '/images/'
 MEDIA_ROOT = BASE_DIR / 'images'
@@ -184,7 +180,7 @@ CSRF_TRUSTED_ORIGINS = [
 # Whitenoise で提供される静的ファイルに CORS を許可しない
 WHITENOISE_ALLOW_ALL_ORIGINS = False
 
-ASGI_APPLICATION = 'project.asgi.application'
+ASGI_APPLICATION = 'project.asgi.application'  # フロントからリクエストが来た時ここを参照
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
