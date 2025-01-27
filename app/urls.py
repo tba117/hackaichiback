@@ -2,6 +2,7 @@ from django.urls import path
 from .Account import views as account_views
 from .Others import views as other_views
 from .Matching import views as matching_views
+from .chat import views as chat_views
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -30,6 +31,8 @@ urlpatterns = [
 
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # JWTトークンの取得
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), # JWTトークンのリフレッシュ
+
+    path('chat-history/<int:room_id>/', chat_views.get_chat_history, name='get_chat_history'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

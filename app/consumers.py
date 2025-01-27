@@ -9,28 +9,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']  # URLから取得したroom_nameを取得
         self.room_group_name = f'chat_{self.room_name}'  # グループ名を作成
 
-        print('接続しました1')
-        print('room_name', self.room_name)
-        print('room_group_name', self.room_group_name)
-
         if not self.channel_layer:
             print("チャンネルレイヤーが設定されていません。")
-        else:
-            print('self.channel_layer', self.channel_layer)
-            print("Available methods in channel_layer:", dir(self.channel_layer))
-            print(help(self.channel_layer.group_add))
-
-        print("channel_name", self.channel_name)
 
         # チャットルームに参加
         await self.channel_layer.group_add(
             self.room_group_name,  # チャットルームを識別するグループ名
             self.channel_name  # 現在の WebSocket 接続のチャンネル名
         )
-
-        print('接続しました2')
-        print('room_group_name',self.room_group_name)
-        print('channel_name', self.channel_name)
 
         await self.accept()
 
