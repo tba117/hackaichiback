@@ -76,6 +76,12 @@ class UserDetailView(APIView):
             # ユーザーが存在しない場合
             return Response({'message': "ユーザーが見つかりません"}, status=404)
         
+        # 関連するチャットルームをシリアライズ
+        related_chat_rooms = [
+            {"id": room.id, "name": room.name, "created_at": room.created_at}
+            for room in user.related_chat_rooms.all()
+        ]
+        
         response_data = {
             "message": f"{user.user_id}の詳細",
             "user": {
@@ -88,7 +94,7 @@ class UserDetailView(APIView):
                 "hobbys": user.hobbys,
                 "user_manual": user.user_manual,
                 "snsid": user.snsid,
-                "related_chat_rooms": user.related_chat_rooms,
+                "related_chat_rooms": related_chat_rooms,
             }
         }
 

@@ -17,8 +17,13 @@ class ChatSerializer(serializers.ModelSerializer):
 # チャットルームシリアライザ
 class ChatRoomSerializer(serializers.ModelSerializer):
     messages = ChatSerializer(many=True, read_only=True)  # 関連メッセージを含める
-    users = UserSerializer(many=True, read_only=True)  # チャットルームのユーザーを含める
+    users = serializers.SerializerMethodField()
 
     class Meta:
         model = ChatRoom
         fields = ['id', 'name', 'users', 'messages', 'created_at', 'unread_count']
+
+    
+    def get_users(self, obj):
+        from ..Account.serializers import UserSerializer  # ローカルインポート
+        return UserSerializer(obj.users.all(), many=True).data
