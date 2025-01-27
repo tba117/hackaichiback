@@ -112,25 +112,12 @@ class UserUpdateView(APIView):
         # ログインしているユーザーのみが自分の情報を更新できる
         user = request.user  # ログイン中のユーザー情報を取得
 
-        if not user:
-            # ユーザーが存在しない場合
-            return JsonResponse({'message': 'ユーザーが見つかりません'}, status=404)
-        
-        serializer = UserUpdateSerializer(user, data=request.data, partial=True) # partial=True: すべてのフィールドが送信されなくても更新可
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True, context={'include': {'related_chat_rooms': True}}) # partial=True: すべてのフィールドが送信されなくても更新可
         if serializer.is_valid():
             serializer.save()
             response_data = {
                 "message": "ユーザーの更新成功",
-                "user": {
-                    "user_id": user.user_id,
-                    "username": user.username,
-                    "self_introduction": user.self_introduction,
-                    "department": user.department,
-                    "skils": user.skils,
-                    "hobbys": user.hobbys,
-                    "user_manual": user.user_manual,
-                    "snsid": user.snsid,
-                }
+                "user": serializer.data  # シリアライザが生成したデータを返す
             }
             return Response(response_data, status=200)
         else:
