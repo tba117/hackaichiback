@@ -1,4 +1,4 @@
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Count
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -44,7 +44,9 @@ def create_chat_room(request):
 
         # ログイン中のユーザーと対象ユーザーの間のチャットルームが存在するか確認
         chat_room = ChatRoom.objects.filter(
-            Q(users=current_user) & Q(users=target_user)
+            users__in=[current_user, target_user]
+        ).annotate(user_count=Count('users')).filter(
+            user_count=2  # ユーザーが2人だけ
         ).distinct().first()
 
         if chat_room:
