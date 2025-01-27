@@ -85,8 +85,6 @@ class UserDetailView(APIView):
                 "hobbys": user.hobbys,
                 "user_manual": user.user_manual,
                 "snsid": user.snsid,
-                "matched_users": user.matched_users,
-                "current_match": user.current_match,
             }
         }
 
