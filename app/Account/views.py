@@ -64,41 +64,29 @@ class LoginView(APIView):  #ログイン
     
 
 # ユーザの詳細取得
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from .serializers import UserSerializer
+from ..models import User
+
+
 class UserDetailView(APIView):
     permission_classes = [AllowAny]
 
-    @method_decorator(csrf_exempt)
     def get(self, request, user_id):
         # ユーザー情報の取得
-        user = User.objects.filter(user_id=user_id).first()
+        user = User.objects.prefetch_related('related_chat_rooms').filter(user_id=user_id).first()
 
-        if not user:
-            # ユーザーが存在しない場合
-            return Response({'message': "ユーザーが見つかりません"}, status=404)
-        
-        # 関連するチャットルームをシリアライズ
-        related_chat_rooms = [
-            {"id": room.id, "name": room.name, "created_at": room.created_at}
-            for room in user.related_chat_rooms.all()
-        ]
-        
+        # シリアライザでデータを取得
+        serializer = UserSerializer(user, context={'include': {'related_chat_rooms': True}})
         response_data = {
             "message": f"{user.user_id}の詳細",
-            "user": {
-                "id": user.id,
-                "user_id": user.user_id,
-                "username": user.username,
-                "self_introduction": user.self_introduction,
-                "department": user.department,
-                "skils": user.skils,
-                "hobbys": user.hobbys,
-                "user_manual": user.user_manual,
-                "snsid": user.snsid,
-                "related_chat_rooms": related_chat_rooms,
-            }
+            "user": serializer.data  # シリアライザからデータを取得
         }
 
         return Response(response_data, status=200)
+
     
 
 # ユーザー情報更新
@@ -112,12 +100,25 @@ class UserUpdateView(APIView):
         # ログインしているユーザーのみが自分の情報を更新できる
         user = request.user  # ログイン中のユーザー情報を取得
 
-        serializer = UserUpdateSerializer(user, data=request.data, partial=True, context={'include': {'related_chat_rooms': True}}) # partial=True: すべてのフィールドが送信されなくても更新可
+        if not user:
+            # ユーザーが存在しない場合
+            return JsonResponse({'message': 'ユーザーが見つかりません'}, status=404)
+        
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True) # partial=True: すべてのフィールドが送信されなくても更新可
         if serializer.is_valid():
             serializer.save()
             response_data = {
                 "message": "ユーザーの更新成功",
-                "user": serializer.data  # シリアライザが生成したデータを返す
+                "user": {
+                    "user_id": user.user_id,
+                    "username": user.username,
+                    "self_introduction": user.self_introduction,
+                    "department": user.department,
+                    "skils": user.skils,
+                    "hobbys": user.hobbys,
+                    "user_manual": user.user_manual,
+                    "snsid": user.snsid,
+                }
             }
             return Response(response_data, status=200)
         else:
