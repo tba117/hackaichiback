@@ -69,6 +69,7 @@ class UserDetailView(APIView):
     def get(self, request, user_id):
         # ユーザー情報の取得
         user = User.objects.filter(user_id=user_id).first()
+        print(user)
 
         if not user:
             # ユーザーが存在しない場合

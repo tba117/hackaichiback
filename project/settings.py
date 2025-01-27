@@ -197,7 +197,7 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             'hosts': [{
                 'address': 'rediss://:p7e46e50767d81cebb364174e1d4f9a14f4e222fde3a4cb2a7886d4b896b638a0@ec2-34-236-76-249.compute-1.amazonaws.com:19190',
-                'ssl_cert_reqs': None,  # 証明書検証をスキップ
+                'ssl_cert_reqs': None,  # 証明書検証をスキップ channel_redisを最新にしないとエラーが出る requirement.txtで最新を記述する
             }],
         },
     },
