@@ -50,17 +50,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'chat_message',
                 'message': message,
-                'sender_id': sender_id,
+                'sender': sender,
             }
         )
 
     # グループからメッセージを受信
     async def chat_message(self, event):
         message = event['message']
-        sender_id = event['sender_id']
+        sender = event['sender']
 
         # WebSocketにメッセージを送信
         await self.send(text_data=json.dumps({
             'message': message,
-            'sender_id': sender_id,
+            'sender_id': sender,
         }))
