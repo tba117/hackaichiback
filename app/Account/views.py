@@ -11,6 +11,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 
 from .serializers import RegisterSerializer, LoginSerializer, UserUpdateSerializer
 
@@ -138,6 +139,12 @@ class CloseAccountView(APIView):
     def post(self, request, user_id):
         try:
             user = User.objects.filter(user_id=user_id).first()
+            # 関連するトークンを削除
+            OutstandingToken.objects.filter(user=user).delete()
+            
+            # その他の関連データを削除または処理（例：チャットルーム）
+            user.related_chat_rooms.clear()  # ManyToManyField を解除
+
             user.delete()
         except User.DoesNotExist:
             return Response({'message': 'ユーザーが見つかりません'}, status=404)
