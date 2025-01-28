@@ -62,5 +62,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # WebSocketにメッセージを送信
         await self.send(text_data=json.dumps({
             'message': message,
-            'sender_id': sender,
+            'sender': sender,
         }))
