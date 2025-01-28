@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db import transaction
+from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 from .models import User, Chat, ChatRoom
 
@@ -12,7 +13,7 @@ class UserAdmin(admin.ModelAdmin):
         with transaction.atomic():
             for user in queryset:
                 # 関連するトークンを削除
-                OutstandingToken.objects.filter(user=user).delete()
+                Token.objects.filter(user=user).delete()
             # ユーザーを削除
             super().delete_queryset(request, queryset)
 
