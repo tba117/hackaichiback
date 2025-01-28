@@ -38,11 +38,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sender = await sync_to_async(User.objects.get)(id=sender_id)
         print(sender)
         room, _ = await sync_to_async(ChatRoom.objects.get_or_create)(name=self.room_name)
-        await sync_to_async(Chat.objects.create)(
+        chat_message = await sync_to_async(Chat.objects.create)(
             room=room,
             sender=sender,
             message=message
         )
+
+        # タイムスタンプを追加
+        timestamp = chat_message.timestamp.isoformat()
 
         # メッセージをグループにブロードキャスト
         await self.channel_layer.group_send(
@@ -51,16 +54,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'type': 'chat_message',
                 'message': message,
                 'sender_id': sender_id,
+                'sender_name': sender.username,
+                'timestamp': timestamp,
             }
         )
 
-    # グループからメッセージを受信
     async def chat_message(self, event):
         message = event['message']
         sender_id = event['sender_id']
+        sender_name = event['sender_name']
+        timestamp = event['timestamp']
 
         # WebSocketにメッセージを送信
         await self.send(text_data=json.dumps({
             'message': message,
             'sender_id': sender_id,
+            'sender_name': sender_name,
+            'timestamp': timestamp,
         }))
