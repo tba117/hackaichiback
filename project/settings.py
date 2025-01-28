@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'corsheaders', # 追加
     'rest_framework.authtoken',
     'channels',
+    'rest_framework_simplejwt.token_blacklist',  # 必須
 ]
 
 MIDDLEWARE = [
