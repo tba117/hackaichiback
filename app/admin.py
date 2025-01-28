@@ -13,7 +13,7 @@ class UserAdmin(admin.ModelAdmin):
         with transaction.atomic():
             for user in queryset:
                 # 関連するトークンを削除
-                Token.objects.filter(user=user).delete()
+                OutstandingToken.objects.filter(user=user).delete()
             # ユーザーを削除
             super().delete_queryset(request, queryset)
 
